@@ -534,10 +534,10 @@ int main(int argc, char **argv){
 	seconds=difftime(end, start);
 	fps=count/seconds;
 	printf("FPS = %.2f\n",fps);
-    // Free device global memory
+	// Free device global memory
 	err = cudaFree(d_frame);
 
-    // Free host memory
+	// Free host memory
 	free(rgb_display);
 	free(gray_display);
 	free(tmp);
