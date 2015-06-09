@@ -430,11 +430,12 @@ void *freenect_threadfunc(void *arg){
 */
 
 int main(int argc, char **argv){
+
 	pthread_t thread;
-    int res,count=0;
-    cudaError_t err = cudaSuccess;
+	int res,count=0;
+	cudaError_t err = cudaSuccess;
 	IplImage* grayscale;
-    size_t size = SIZE * sizeof(uint8_t);
+	size_t size = SIZE * sizeof(uint8_t);
 	rgb_display = (uint8_t*)malloc(size*3);
 	gray_display= (uint8_t*)malloc(size);
 	tmp= (uint8_t*)malloc(size);
@@ -443,8 +444,8 @@ int main(int argc, char **argv){
 	time_t start,end;
 	double seconds,fps;
 
-    uint8_t *d_frame = NULL;
-    err = cudaMalloc((void **)&d_frame, size);
+	uint8_t *d_frame = NULL;
+	err = cudaMalloc((void **)&d_frame, size);
 	
 	/* Kinect in main */
 		
@@ -453,23 +454,29 @@ int main(int argc, char **argv){
 		printf("freenect_init() failed\n");
 		return 1;
 	}
+	
 	//freenect_set_log_level(f_ctx, FREENECT_LOG_DEBUG);
 	freenect_select_subdevices(f_ctx, (freenect_device_flags)(FREENECT_DEVICE_MOTOR | FREENECT_DEVICE_CAMERA));
 	int nr_devices = freenect_num_devices (f_ctx);
 	printf ("Number of devices found: %d\n", nr_devices);
 	int user_device_number = 0;
+	
 	if (argc > 1)
 		user_device_number = atoi(argv[1]);
+	
 	if (nr_devices < 1) {
 		freenect_shutdown(f_ctx);
 		return 1;
 	}
+	
 	if (freenect_open_device(f_ctx, &f_dev, user_device_number) < 0) {
 		printf("Could not open device\n");
 		freenect_shutdown(f_ctx);
 		return 1;
 	}
+	
 	res = pthread_create(&freenect_thread, NULL, freenect_threadfunc, NULL);
+	
 	if (res) {
 		printf("pthread_create failed\n");
 		freenect_shutdown(f_ctx);
@@ -487,9 +494,9 @@ int main(int argc, char **argv){
 
 	while(1){
 		/* HOST */
-		//gray(rgb_display);
-		//medianFilter(tmp);
-		//edgeDetection(tmp2);
+		// gray(rgb_display);
+		// medianFilter(tmp);
+		// edgeDetection(tmp2);
 
 
 		err = cudaMemcpy(d_frame, tmp, size, cudaMemcpyHostToDevice);
@@ -517,18 +524,18 @@ int main(int argc, char **argv){
 		cvSetData(grayscale,gray_display,WIDTH);
 		cvShowImage("CUDA Example", grayscale);
 		++count;
-		char c = cvWaitKey(33);
+		char c = cvWaitKey(10);
 	    if (c == 27){
 			time(&end);
 			break;
 	    }
 	}
 
-        seconds=difftime(end, start);
-        fps=count/seconds;
-        printf("FPS = %.2f\n",fps);
+	seconds=difftime(end, start);
+	fps=count/seconds;
+	printf("FPS = %.2f\n",fps);
     // Free device global memory
-    err = cudaFree(d_frame);
+	err = cudaFree(d_frame);
 
     // Free host memory
 	free(rgb_display);
@@ -536,7 +543,7 @@ int main(int argc, char **argv){
 	free(tmp);
 	free(tmp2);
 	free(window);
-    err = cudaDeviceReset();
+	err = cudaDeviceReset();
 	
 	// Free kinect
 	terminate=1;

@@ -262,13 +262,12 @@ int main(int argc, char **argv){
 	gray(rgb_display);
 	while(1){
 		/* Host */
-//		gray(rgb_display);
-//		medianFilter(tmp);
-//		edgeDetection(tmp2);
+		// gray(rgb_display);
+		// medianFilter(tmp);
+		// edgeDetection(tmp2);
 
 
 		/* Epiphany */
-
 		// Copy Image to cores local memory
 		for (row=0; row<(int) epiphany.platform.rows; row++)
 			for (col=0; col<(int) epiphany.platform.cols; col++){
@@ -303,7 +302,7 @@ int main(int argc, char **argv){
 		cvSetData(grayscale,gray_display,WIDTH);
 		cvShowImage("Output", grayscale);
 		++count;
-		char c = cvWaitKey(33);
+		char c = cvWaitKey(10);
 	    if (c == 27){
 		time(&end);
 		msg.signal_go=1;
@@ -316,9 +315,10 @@ int main(int argc, char **argv){
 		break;
 	    }
 	}
-        seconds=difftime(end, start);
-        fps=count/seconds;
-        printf("FPS = %.2f\n",fps);
+        
+    seconds=difftime(end, start);
+    fps=count/seconds;
+    printf("FPS = %.2f\n",fps);
 	cvReleaseImage(&grayscale);
 	cvDestroyWindow("Output");
 	close_epiphany(&epiphany);
