@@ -1,0 +1,1 @@
+A small program that reports all of the available OpenCL platforms on your machine, and all of their devices.
